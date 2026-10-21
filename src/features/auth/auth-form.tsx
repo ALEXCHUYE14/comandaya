@@ -9,6 +9,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { getSupabase } from "@/infrastructure/supabase/client";
 import { isSupabaseConfigured } from "@/infrastructure/supabase/env";
 
@@ -72,9 +73,8 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
         <Input required type="email" autoComplete="email" inputMode="email" value={form.email} onChange={set("email")} placeholder="tucorreo@gmail.com" />
       </Field>
       <Field label="Contraseña" hint={mode === "register" ? "Mínimo 8 caracteres" : undefined}>
-        <Input
+        <PasswordInput
           required
-          type="password"
           minLength={mode === "register" ? 8 : undefined}
           autoComplete={mode === "login" ? "current-password" : "new-password"}
           value={form.password}

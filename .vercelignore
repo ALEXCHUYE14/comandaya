@@ -1,0 +1,9 @@
+# Nunca subir secretos ni artefactos locales a Vercel
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+node_modules
+.next
+*.log

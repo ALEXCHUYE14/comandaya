@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { errorMessage } from "@/core/lib/cn";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { getSupabase } from "@/infrastructure/supabase/client";
 import { isSupabaseConfigured } from "@/infrastructure/supabase/env";
 
@@ -143,10 +144,10 @@ export function ResetPasswordForm() {
   return (
     <form onSubmit={submit} className="space-y-4">
       <Field label="Nueva contraseña" hint="Mínimo 8 caracteres">
-        <Input required type="password" minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <PasswordInput required minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
       </Field>
       <Field label="Repite la contraseña">
-        <Input required type="password" minLength={8} autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+        <PasswordInput required minLength={8} autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
       </Field>
       <Button type="submit" size="lg" className="w-full" disabled={saving}>
         {saving ? <Loader2 className="animate-spin" /> : <ArrowRight />} Guardar y entrar

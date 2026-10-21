@@ -1530,6 +1530,16 @@ end $$;
 
 -- 5.7d Suscripción: vista del negocio y panel de administración MAFC
 
+-- Precio público del plan para la página de inicio (sólo datos comerciales, nada de cobro)
+create or replace function public.public_plan()
+returns jsonb
+language sql stable security definer set search_path = ''
+as $$
+  select jsonb_build_object('plan_name', ps.plan_name, 'monthly_price', ps.monthly_price,
+                            'trial_days', ps.trial_days, 'grace_days', ps.grace_days)
+  from public.platform_settings ps limit 1
+$$;
+
 -- Plan del negocio del usuario. No usa current_tenant_id() a propósito: un negocio
 -- suspendido también debe poder ver cuánto debe y cómo pagar.
 create or replace function public.my_subscription()
@@ -1871,6 +1881,7 @@ revoke execute on function public.billing_confirm_payment(uuid, text, numeric, t
 do $$ begin
   grant execute on function public.billing_confirm_payment(uuid, text, numeric, text, text) to service_role;
 exception when undefined_object then null; end $$;
+grant execute on function public.public_plan() to anon, authenticated;
 grant execute on function public.get_public_menu(text) to anon, authenticated;
 grant execute on function public.place_public_order(text, public.order_type, jsonb, text, text, text, text) to anon, authenticated;
 grant execute on function public.get_public_order(uuid) to anon, authenticated;
