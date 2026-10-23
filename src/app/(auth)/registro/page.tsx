@@ -1,18 +1,16 @@
 import { Suspense } from "react";
 import { AuthForm } from "@/features/auth/auth-form";
+import { AuthHeading } from "@/features/auth/auth-heading";
 
 export const metadata = { title: "Crear cuenta" };
 
+const TITLE = "Crea tu cuenta";
+const SUBTITLE = "Dueños: luego registras tu negocio. Personal: tu jefe te vincula con tu correo.";
+
 export default function RegisterPage() {
   return (
-    <>
-      <h1 className="text-3xl font-extrabold">Crea tu cuenta</h1>
-      <p className="mb-8 mt-1 text-muted">
-        Dueños: luego registras tu negocio. Personal: tu jefe te vincula con tu correo.
-      </p>
-      <Suspense>
-        <AuthForm mode="register" />
-      </Suspense>
-    </>
+    <Suspense fallback={<AuthHeading title={TITLE} subtitle={SUBTITLE} />}>
+      <AuthForm mode="register" title={TITLE} subtitle={SUBTITLE} />
+    </Suspense>
   );
 }

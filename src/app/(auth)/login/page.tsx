@@ -1,16 +1,16 @@
 import { Suspense } from "react";
 import { AuthForm } from "@/features/auth/auth-form";
+import { AuthHeading } from "@/features/auth/auth-heading";
 
 export const metadata = { title: "Iniciar sesión" };
 
+const TITLE = "Bienvenido de vuelta";
+const SUBTITLE = "Ingresa para abrir la caja.";
+
 export default function LoginPage() {
   return (
-    <>
-      <h1 className="text-3xl font-extrabold">Bienvenido de vuelta</h1>
-      <p className="mb-8 mt-1 text-muted">Ingresa para abrir la caja.</p>
-      <Suspense>
-        <AuthForm mode="login" />
-      </Suspense>
-    </>
+    <Suspense fallback={<AuthHeading title={TITLE} subtitle={SUBTITLE} />}>
+      <AuthForm mode="login" title={TITLE} subtitle={SUBTITLE} />
+    </Suspense>
   );
 }

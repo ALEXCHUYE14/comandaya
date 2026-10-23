@@ -5,22 +5,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Loader2, MailCheck, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
-import { errorMessage } from "@/core/lib/cn";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { getSupabase } from "@/infrastructure/supabase/client";
+import { authMessage } from "./auth-messages";
 import { isSupabaseConfigured } from "@/infrastructure/supabase/env";
-
-/** Mensajes de Supabase Auth en español. */
-function authMessage(err: unknown): string {
-  const msg = errorMessage(err, "Error inesperado");
-  if (/rate limit|security purposes|too many/i.test(msg)) return "Demasiados intentos. Espera un minuto y vuelve a intentarlo.";
-  if (/different from the old/i.test(msg)) return "La nueva contraseña debe ser distinta a la anterior.";
-  if (/at least|weak/i.test(msg)) return "La contraseña es muy débil: usa mínimo 8 caracteres.";
-  if (/expired|invalid/i.test(msg)) return "El enlace venció o ya se usó. Pide uno nuevo.";
-  return msg;
-}
 
 /** Paso 1: pedir el enlace por correo. */
 export function ForgotPasswordForm() {
