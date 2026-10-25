@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { ResetPasswordForm } from "@/features/auth/password-reset";
 
-export const metadata = { title: "Nueva contraseña" };
+export const metadata = { title: "Nueva contraseña", robots: { index: false, follow: false } };
 
 export default function ResetPasswordPage() {
   return (

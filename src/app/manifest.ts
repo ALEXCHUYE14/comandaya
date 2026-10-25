@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "MAFC Comanda · POS gastronómico",
     short_name: "MAFC Comanda",
-    description: "Caja, cocina y carta QR en tiempo real.",
+    description: "Sistema POS para restaurantes en Perú: caja, cocina y carta QR en tiempo real.",
     start_url: "/pos",
     display: "standalone",
     orientation: "any",

@@ -8,11 +8,18 @@ import { ThemeToggle } from "@/components/theme";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_PLAN, MAFC_TAGLINE, MAFC_WHATSAPP, MAFC_WHATSAPP_DISPLAY, type PublicPlan } from "@/core/domain/mafc";
 import { money, whatsappLink } from "@/core/domain/order-rules";
+import { jsonLd, SEO_DESCRIPTION, SEO_TITLE, SITE_NAME, SITE_URL } from "@/core/domain/seo";
 import { isSupabaseConfigured } from "@/infrastructure/supabase/env";
 import { getPublicServerSupabase } from "@/infrastructure/supabase/public-server";
 
 // Página estática que se regenera cada hora: el precio sale del panel /mafc sin consultar en cada visita
 export const revalidate = 3600;
+
+export const metadata = {
+  title: { absolute: SEO_TITLE },
+  description: SEO_DESCRIPTION,
+  alternates: { canonical: "/" },
+};
 
 /** Precio y días de prueba configurados en /mafc → Plan y cobro (con valores por defecto si falla). */
 async function getPlan(): Promise<PublicPlan> {
@@ -64,6 +71,8 @@ export default async function Home() {
   const year = new Date().getFullYear();
 
   const FAQ = [
+    { q: "¿Qué es MAFC Comanda?", a: "Es un sistema para restaurantes en Perú que une la caja (POS), la pantalla de cocina y la carta digital QR en tiempo real. Está pensado para cevicherías, pollerías, broasterías, hamburgueserías, cafeterías y dark kitchens." },
+    { q: "¿Por qué es un software POS económico para restaurantes?", a: `Porque cuesta ${price} al mes con todo incluido: caja, cocina, carta QR, cuadre de caja, reportes y usuarios ilimitados. No pagas instalación, equipos especiales ni contratos, y pruebas ${trial} días gratis.` },
     { q: "¿Necesito instalar algo o comprar equipos?", a: "No. Funciona en el navegador de cualquier celular, tablet o computadora que ya tengas. Para imprimir tickets puedes usar tu ticketera térmica de 80 mm." },
     { q: `¿Qué pasa cuando terminan mis ${trial} días gratis?`, a: `Sigues con el plan de ${price} al mes. Pagas por Yape o Plin y envías tu comprobante por WhatsApp; tu acceso se extiende al confirmar el pago.` },
     { q: "Si me atraso con el pago, ¿pierdo mi información?", a: `No. Tienes ${plan.grace_days} días de gracia con un aviso. Si se suspende la cuenta, tus productos, ventas y reportes se conservan y vuelven apenas pagas.` },
@@ -72,8 +81,47 @@ export default async function Home() {
     { q: "¿Emite boletas o facturas electrónicas?", a: "Por ahora no: el ticket del sistema es una nota de venta. Si necesitas algo a la medida de tu negocio, escríbenos." },
   ];
 
+  const structured = [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: SITE_NAME,
+      applicationCategory: "BusinessApplication",
+      applicationSubCategory: "Sistema POS para restaurantes",
+      operatingSystem: "Web, Android, iOS, Windows, macOS",
+      url: SITE_URL,
+      description: SEO_DESCRIPTION,
+      inLanguage: "es-PE",
+      areaServed: { "@type": "Country", name: "Perú" },
+      offers: {
+        "@type": "Offer",
+        price: plan.monthly_price.toFixed(2),
+        priceCurrency: "PEN",
+        description: `${plan.plan_name}: plan mensual con ${trial} días de prueba gratis`,
+        url: `${SITE_URL}/registro`,
+      },
+      featureList: FEATURES.map((f) => f.title).join(", "),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "MAFC",
+      url: SITE_URL,
+      logo: `${SITE_URL}/icon.svg`,
+      slogan: `${MAFC_TAGLINE} de tu negocio`,
+      contactPoint: { "@type": "ContactPoint", telephone: `+${MAFC_WHATSAPP}`, contactType: "sales", areaServed: "PE", availableLanguage: "es" },
+    },
+    { "@context": "https://schema.org", "@type": "WebSite", name: SITE_NAME, url: SITE_URL, inLanguage: "es-PE" },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    },
+  ];
+
   return (
     <div className="min-h-dvh">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structured) }} />
       <header className="sticky top-0 z-30 border-b border-transparent bg-bg/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-4">
           <Brand />
@@ -98,11 +146,14 @@ export default async function Home() {
             <Smartphone className="size-4" /> Para cevicherías, broasterías, hamburgueserías y dark kitchens
           </p>
           <h1 className="text-5xl font-extrabold leading-[1.02] sm:text-6xl">
+            <span className="mb-3 block text-sm font-bold uppercase tracking-wider text-muted sm:text-base">
+              MAFC Comanda · Sistema para restaurantes en Perú
+            </span>
             El cuaderno de pedidos <span className="text-accent">ya fue.</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg text-muted">
-            MAFC Comanda conecta tu caja, tu cocina y la carta QR en tiempo real. Menos gritos, cero comandas
-            perdidas y clientes que saben exactamente cuándo sale su plato.
+            MAFC Comanda es el software POS económico que conecta tu caja, tu cocina y la carta QR en tiempo real.
+            Menos gritos, cero comandas perdidas y clientes que saben exactamente cuándo sale su plato.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button size="lg" asChild><Link href="/registro">Crear mi negocio <ArrowRight /></Link></Button>
@@ -138,8 +189,8 @@ export default async function Home() {
       {/* Funciones */}
       <section id="funciones" className="mx-auto max-w-6xl scroll-mt-20 px-5 pb-20">
         <div className="mb-8 max-w-2xl">
-          <p className="text-sm font-bold uppercase tracking-wider text-accent">Todo en un solo sistema</p>
-          <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">Lo que necesitas para atender, cobrar y crecer</h2>
+          <p className="text-sm font-bold uppercase tracking-wider text-accent">Software para restaurantes todo en uno</p>
+          <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">El sistema para restaurantes con lo que necesitas para atender, cobrar y crecer</h2>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map((f) => (
@@ -187,8 +238,8 @@ export default async function Home() {
       <section id="precio" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-bold uppercase tracking-wider text-accent">Precio</p>
-          <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">Un solo plan, con todo incluido</h2>
-          <p className="mt-3 text-muted">Sin contratos ni costos de instalación. Pruébalo gratis y decide después.</p>
+          <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">Software POS económico: un solo plan, con todo incluido</h2>
+          <p className="mt-3 text-muted">Desde {price} al mes, sin contratos ni costos de instalación. Pruébalo gratis y decide después.</p>
         </div>
         <div className="relative mx-auto mt-10 max-w-md">
           <div className="absolute -inset-4 -z-10 rounded-[2.5rem] bg-accent/10 blur-2xl" />

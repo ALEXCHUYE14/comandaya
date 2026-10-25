@@ -1,6 +1,6 @@
 import { ForgotPasswordForm } from "@/features/auth/password-reset";
 
-export const metadata = { title: "Recuperar contraseña" };
+export const metadata = { title: "Recuperar contraseña", robots: { index: false, follow: false } };
 
 export default function ForgotPasswordPage() {
   return (

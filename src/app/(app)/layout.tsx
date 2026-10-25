@@ -11,6 +11,8 @@ import { isSupabaseConfigured } from "@/infrastructure/supabase/env";
 import { getServerSupabase } from "@/infrastructure/supabase/server";
 
 export const dynamic = "force-dynamic";
+// Zona privada del sistema: nunca debe aparecer en buscadores
+export const metadata = { robots: { index: false, follow: false } };
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   if (!isSupabaseConfigured) return <SetupNotice />;

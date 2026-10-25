@@ -6,7 +6,7 @@ import { isSupabaseConfigured } from "@/infrastructure/supabase/env";
 import { getServerSupabase } from "@/infrastructure/supabase/server";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Bienvenida" };
+export const metadata = { title: "Bienvenida", robots: { index: false, follow: false } };
 
 export default async function WelcomePage() {
   if (!isSupabaseConfigured) return <SetupNotice />;
